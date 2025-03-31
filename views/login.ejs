@@ -2,10 +2,18 @@
 <h1>Login</h1>
 <form action="/login" method="post">
   <label for="identifier">Anna ID tai sähköposti:</label>
+<<<<<<< HEAD
   <input type="text" id="identifier" name="identifier" required>
   <br>
+=======
+  <input type="text" id="identifier" name="identifier" required />
+  <br />
+  <label for="password">Salasana:</label>
+  <input type="password" id="password" name="password" required />
+  <br />
+>>>>>>> 41e2118 (4)
   <% if (typeof error !== 'undefined') { %>
-    <p style="color: red;"><%= error %></p>
+  <p style="color: red"><%= error %></p>
   <% } %>
   <button type="submit">Login</button>
 </form>

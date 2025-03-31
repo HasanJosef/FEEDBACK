@@ -4,6 +4,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
 import session from "express-session";
+<<<<<<< HEAD
+=======
+import bcrypt from "bcrypt";
+>>>>>>> 41e2118 (4)
 
 const port = 3000;
 const host = "localhost";
@@ -41,7 +45,10 @@ function isAuthenticated(req, res, next) {
   }
 }
 
+<<<<<<< HEAD
 // Middleware to check if user is admin
+=======
+>>>>>>> 41e2118 (4)
 function isAdmin(req, res, next) {
   if (req.session.user && req.session.user.admin) {
     return next();
@@ -73,19 +80,47 @@ app.post("/login", async (req, res) => {
       password: dbPwd,
       database: dbName,
     });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 41e2118 (4)
     const [rows] = await connection.execute(
       "SELECT * FROM system_user WHERE id = ? OR email = ?",
       [identifier, identifier]
     );
+<<<<<<< HEAD
     if (rows.length > 0 && rows[0].admin) {
       req.session.user = rows[0];
       res.redirect("/customers-users");
+=======
+
+    if (rows.length > 0) {
+      const user = rows[0];
+
+      if (!user.password) {
+        return res.render("login", {
+          error: "Virheelliset tunnistetiedot tai ei järjestelmänvalvoja",
+        });
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+
+      if (match && user.admin) {
+        req.session.user = user;
+        res.redirect("/customer-users");
+      } else {
+        res.render("login", {
+          error: "Virheelliset tunnistetiedot tai ei järjestelmänvalvoja",
+        });
+      }
+>>>>>>> 41e2118 (4)
     } else {
       res.render("login", {
         error: "Virheelliset tunnistetiedot tai ei järjestelmänvalvoja",
       });
     }
   } catch (err) {
+<<<<<<< HEAD
     console.error(
       "Database error:",
       err.message,
@@ -94,6 +129,8 @@ app.post("/login", async (req, res) => {
       "SQL State:",
       err.sqlState
     );
+=======
+>>>>>>> 41e2118 (4)
     res.status(500).send("Internal Server Error");
   } finally {
     if (connection) await connection.end();
@@ -114,6 +151,7 @@ app.get("/api/feedback", isAuthenticated, async (req, res) => {
       password: dbPwd,
       database: dbName,
     });
+<<<<<<< HEAD
     const [rows] = await connection.execute("SELECT * FROM feedback");
     res.json(rows);
   } catch (err) {
@@ -125,6 +163,23 @@ app.get("/api/feedback", isAuthenticated, async (req, res) => {
       "SQL State:",
       err.sqlState
     );
+=======
+
+    const [customers] = await connection.execute(
+      "SELECT id, name FROM customer"
+    );
+
+    const [users] = await connection.execute(
+      "SELECT id, fullname, email, mailing_list, customer_id, admin FROM system_user"
+    );
+
+    res.render("customers-users", {
+      user: req.session.user,
+      customers: customers,
+      users: users,
+    });
+  } catch (err) {
+>>>>>>> 41e2118 (4)
     res.status(500).send("Internal Server Error");
   } finally {
     if (connection) await connection.end();
@@ -364,8 +419,26 @@ async function createDatabaseIfNotExists() {
       password: dbPwd,
     });
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+<<<<<<< HEAD
   } catch (err) {
     console.error("Database creation error:", err.message);
+=======
+    await connection.changeUser({ database: dbName });
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS customer (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL
+      );
+    `);
+
+    const hashedPassword = await bcrypt.hash("14", 10);
+    await connection.query(`
+      INSERT IGNORE INTO system_user (id, fullname, email, password, mailing_list, customer_id, admin) VALUES
+      (14, 'Test User', '14', '${hashedPassword}', false, NULL, true);
+    `);
+  } catch (err) {
+>>>>>>> 41e2118 (4)
   } finally {
     if (connection) await connection.end();
   }
