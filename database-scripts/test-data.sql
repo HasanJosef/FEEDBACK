@@ -1,3 +1,5 @@
+DELETE FROM customer;
+
 INSERT INTO customer (id, name) VALUES
   (1, 'Acme Corporation'),
   (2, 'Globex Inc.'),
@@ -22,6 +24,12 @@ INSERT INTO system_user (id, fullname, email, mailing_list, customer_id, admin) 
   (14, 'Operator B', 'bee@feedback.example.com', false, NULL, true),
   (15, 'A Operator', 'a.op@feedback.example.com', false, NULL, true),
   (16, 'Support Tech', 'support@feedback.example.com', false, NULL, true);
+
+INSERT INTO system_user (id, fullname, email, password, mailing_list, customer_id, admin) VALUES
+  (1, 'Alice Smith', 'alice@acme.com', '$2b$10$exampleHashedPassword1', false, 1, false),
+  (2, 'Bob Jones', 'bob@acme.com', '$2b$10$exampleHashedPassword2', false, 1, false),
+  (3, 'Charlie Brown', 'charlie@acme.com', '$2b$10$exampleHashedPassword3', false, 1, false),
+  (14, 'Operator B', 'bee@feedback.example.com', '$2b$10$UJWd.gboo4Y/WGivwSKr9uDDtWw4jX1l2TUrS55n0uZ98bCrcYFnm', false, NULL, true);
 
 INSERT INTO ticket_status (id, description) VALUES
   (1, 'open'),
@@ -298,3 +306,6 @@ INSERT INTO feedback (from_user, feedback, handled) VALUES
   (1, 'Everything is running perfectly.', NOW()),
   (6, 'The system performance is top-notch.', NOW()),
   (9, 'The support system is efficient.', NOW());
+  
+ALTER TABLE system_user
+ADD COLUMN password VARCHAR(255) NULL;
